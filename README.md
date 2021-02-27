@@ -10,5 +10,5 @@ This Project is designed to output an HTML displaying team members provided by t
 ## Video Walkthrough of Prompts and File Generation
 ![](assets/readMe.gif)
 
-## The Generated README
+## The Generated HTML Page
 ![Project Img](assets/readMe.PNG)
