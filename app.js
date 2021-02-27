@@ -1,4 +1,6 @@
+const Employee = require("./lib/Employee");
 const Manager = require("./lib/Manager");
+
 const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
 const inquirer = require("inquirer");
@@ -9,7 +11,116 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+const { inherits } = require("util");
 
+employees = [];
+tempEmployees = [];
+
+const questions = [
+    {
+        type: "list",
+        message: "What is your role?",
+        choices: ["Manager", "Engineer", "Intern"],
+        name: "role"
+    },
+    {          
+        type: "input",
+        message: "What is your name?",
+        name: "name",
+    },
+    {          
+        type: "input",
+        message: "What is your unique ID?",
+        name: "theID",
+    },
+    {
+        type: "input",
+        message: "What is your email?",
+        name: "email"
+    },   
+    {
+        type: "input",
+        message: "What is your Office Number?",
+        name: "officeNumber",
+        when : (answers) => {
+            if (answers.role === "Manager") {
+                return true;
+            }
+        }
+    },
+    {
+        type: "input",
+        message: "What is your Github account?",
+        name: "githun",
+        when : (answers) => {
+            if (answers.role === "Engineer") {
+                return true;
+            }
+        }
+    },
+    {
+        type: "input",
+        message: "What school do you attend?",
+        name: "school",
+        when : (answers) => {
+            if (answers.role === "Intern") {
+                return true;
+            }
+        }
+    }
+]
+
+const additional = {
+    type: "list",
+    message: "Would you like to add additional employees?",
+    choices: ["Yes", "No"],
+    name: "add" 
+}
+
+function init()
+{
+    inquirer.prompt(questions).then((response) => {
+        tempEmployees.push(response)
+            inquirer.prompt(additional).then((continueQ) => {
+                if (continueQ.add == "Yes")
+                {
+                    init();
+                }
+                else
+                {
+                    for(i = 0; i < tempEmployees.length; i++){
+                        
+                        if(tempEmployees[i].role = "Manager")
+                        {
+                            const newEmp = new Manager(tempEmployees[i].name, tempEmployees[i].theID, tempEmployees[i].email, tempEmployees[i].officeNumber) 
+                            employees.push(newEmp)                       
+                        }
+                        else if (tempEmployees[i].role = "Engineer")
+                        {
+                            const newEmp = new Engineer(tempEmployees[i].name, tempEmployees[i].theID, tempEmployees[i].email, tempEmployees[i].github) 
+                            employees.push(newEmp)
+                        }
+                        else if (tempEmployees[i].role = "Intern")
+                        {
+                            const newEmp = new Manager(tempEmployees[i].name, tempEmployees[i].theID, tempEmployees[i].email, tempEmployees[i].school) 
+                            employees.push(newEmp)
+                        }
+
+                       
+                        
+                        
+
+                    }
+
+                    const newRender = render(employees);
+                    console.log(newRender)
+                 
+                }
+            })
+    })
+}
+
+init();
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
